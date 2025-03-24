@@ -2,7 +2,7 @@
 
 import { store } from "@/app/persistence/cart";
 
-import { IProduct } from "@/app/persistence/cart";
+import { IProduct } from "../ts/type-definitions";
 import { openCart } from "../ts/utility";
 import { truncate } from "../ts/utility";
 

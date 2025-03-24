@@ -2,7 +2,7 @@ import Products from "@/app/ui/products";
 import LoadMore from "@/app/ui/load";
 import { CATEGORY } from "@/app/configuration/wwurm";
 import { findByCatgory } from "@/app/actions";
-import { IProduct } from "@/app/persistence/cart";
+import { IProduct } from "@/app/ts/type-definitions";
 
 export default async function CategoryPage({ params, }: {params: Promise<{ category: string }>}) {
     const { category } = await params;

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SHOP } from "@/app/configuration/wwurm"; 
-import { ICart, store } from "@/app/persistence/cart";
+import { store } from "@/app/persistence/cart";
+import { ICart } from "@/app/ts/type-definitions";
 import InputNumber from "@/app/ui-client/input-number";
 
 export default function Cart() {

@@ -1,5 +1,5 @@
 import products from "../data/products.json";
-import { IProduct } from "../persistence/cart";
+import { IProduct } from "../ts/type-definitions";
 
 export const find = function (myslug: string) {
     let match = products.filter(({ slug }) => 

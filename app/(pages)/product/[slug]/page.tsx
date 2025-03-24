@@ -2,7 +2,7 @@ import { BtnNext, BtnPrev } from "@/app/ui/btns";
 import Card from "@/app/ui/card";
 import Link from "next/link";
 
-import { IProduct } from "@/app/persistence/cart";
+import { IProduct } from "@/app/ts/type-definitions";
 import { ICON_LIST} from "@/app/configuration/wwurm";
 import { getProductPageData } from "@/app/actions";
 import CartAddWidget from "@/app/ui-client/cart-add-widget";

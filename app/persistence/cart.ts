@@ -1,64 +1,15 @@
 "use client"
 
+import { ICallback, ICart, IStore, ITruncatedProduct,  } from "../ts/type-definitions";
+
 /* Localstorage is used for state management as state is not preserved from server
  side render of Nextjs */
 
-const CART_KEY = "charm-access-key";
+const CART_KEY = "wwurm-access-key";
 
-export type IProduct = {
-    id: number;
-    name: string;
-    price: number;
-    description?: string;
-    thumbnails?: Array<string>;
-    card?: Array<string>;
-    images?: Array<string>;
-    availability?: number;    
-    slug: string;
-    categories: Array<string>;
-}
-
-export type ITruncatedProduct = {
-    id: number,
-    name: string,
-    image: string,
-    price: number,
-    slug: string
-}
-
-export type ICartItem = {
-    id: number,
-    name: string,
-    image: string,
-    price: number,
-    slug: string
-    qty: number;
-}
-
-export type ICart = Array<ICartItem>;
-
-export interface IStore {
-    cart: ICart;
-    callbacks: Array<ICallback>;
-    getInstance: () => IStore;
-    triggerCallbacks: () => void;
-    getCart: () => ICart;
-    sync: () => void;
-    find: (id: number) => ICartItem | undefined;
-    add: (truncatedProduct: ITruncatedProduct) => void;
-    increase: (id : number, qty: number) => void;
-    reduce: (id : number) => void;
-    remove: (id: number) => void;
-    empty: () => void;
-    getCount: () => number;
-    registerCallback: (fn: () => void) => void;
-}
-
-type ICallback = () => void;
-
+/* Singleton - must be a singleton to work */
 let instance: Store;
 
-/* Singleton */
 class Store implements IStore {
     cart: ICart = [];
 
@@ -70,42 +21,30 @@ class Store implements IStore {
         if (instance) {
             throw new Error("You can only create one instance!");
         }
-
         // important: update cart from local storage when constructor called, 
         // otherwise it initialise to empty on
         // every page refresh
         let _contents = global?.localStorage?.getItem(CART_KEY); 
-
         if ( _contents ) {
             this.cart = JSON.parse(_contents);     
         }
         instance = this;
     }
 
-    getInstance() {
-        return this;
-    }
+    getInstance = () => this;
 
-    triggerCallbacks() {
-        for (let i = 0; i < this.callbacks.length; i++) {
-            const fn = this.callbacks[i];
-            fn();
-        }
-    }
+    triggerCallbacks = () => this.callbacks.forEach((fn) => fn());
 
+    getCount = () => this.cart.length;
+    
     getCart() {
         let _contents = localStorage.getItem(CART_KEY);
-
         if ( _contents ) {
             this.cart = JSON.parse(_contents);     
         } else {
             this.cart = [];
         }
         return this.cart;
-    }
-
-    getCount() {
-        return this.cart.length;
     }
 
     async sync () {
@@ -116,11 +55,7 @@ class Store implements IStore {
 
     find (id: number) {
         //find an item in the cart by it's id
-        let match = this.cart.filter(item => {
-            if( item.id == id )
-                return true;
-        });
-
+        let match = this.cart.filter(item => ( item.id === id ));
         if( match && match[0] )
             return match[0];
     }
@@ -135,28 +70,22 @@ class Store implements IStore {
                     item.qty = item.qty + qty;
                 return item;
             });
-            //update localStorage
-            this.sync();
-            this.triggerCallbacks();
         } else {
-            let obj: ICartItem = {
+            this.cart.push({
                 id: truncatedProduct.id,
                 name: truncatedProduct.name,
                 qty: qty,
                 price: truncatedProduct.price,
                 slug: truncatedProduct.slug,
                 image: truncatedProduct.image
-            };
-            this.cart.push(obj);
-            //update localStorage
-            this.sync();
-            this.triggerCallbacks();
-        }   
+            });
+        } 
+        this.sync();
+        this.triggerCallbacks();  
     }
 
-    increase (id : number) {
-        //increase the quantity of an item in the cart
-        console.log("called increase ", id)
+    increase (id : number) {    
+        //increase the quantity of an item in the cart   
         const qty = 1;
         this.cart = this.cart.map(item => {
             if( item.id === id )
@@ -164,7 +93,7 @@ class Store implements IStore {
             return item;
         });
         //update localStorage
-        this.sync();
+        this.sync(); 
         this.triggerCallbacks();
     }
 
@@ -172,7 +101,6 @@ class Store implements IStore {
         //reduce the quantity of an item in the cart
         const qty = 1;
         this.cart = this.cart.map( item => {
-            console.log("id ", id)
             if( item.id === id )
                 item.qty = item.qty - qty;
             return item;
@@ -205,10 +133,9 @@ class Store implements IStore {
         this.triggerCallbacks();
     }
 
-    registerCallback(fn: () => void) {  
-        /* register a callback function to be called when the cart is updated */
-        this.callbacks.push(fn);
-    }
+    /* register a callback function to be called when the cart is updated */
+    registerCallback = (fn: () => void) => this.callbacks.push(fn);
+
 }
 
 const store = new Store();

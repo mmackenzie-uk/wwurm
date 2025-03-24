@@ -1,8 +1,8 @@
 "use client"
 
-import { ISimplifiedProduct, store } from "@/app/persistence/cart";
+import {  store } from "@/app/persistence/cart";
+import { ITruncatedProduct, IProduct } from "../ts/type-definitions"
 
-import { IProduct } from "@/app/persistence/cart";
 import { useState } from "react";
 import { openCart } from "../ts/utility";
 
@@ -13,10 +13,10 @@ type IBtnBuy = {
 export default function CartAdd({ product } : IBtnBuy) {
     const [count, setCount ] = useState(1);
 
-    let simplifiedProduct : ISimplifiedProduct;
+    let truncatedProduct : ITruncatedProduct;
 
     if (product) {
-        simplifiedProduct = {
+        truncatedProduct = {
             id: product.id,
             name: product.name,
             image: product.thumbnails? product.thumbnails[0] : "",
@@ -26,8 +26,8 @@ export default function CartAdd({ product } : IBtnBuy) {
     }
     
     const addItem = () => {
-        if (simplifiedProduct) {
-            store.add(simplifiedProduct, count);
+        if (truncatedProduct) {
+            store.add(truncatedProduct, count);
             openCart();
         }
     }

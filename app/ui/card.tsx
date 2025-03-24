@@ -1,7 +1,7 @@
 import Link from "next/link";
 import BtnBuy from "../ui-client/btn-buy";
 import { BtnLike } from "./btns";
-import { IProduct } from "../persistence/cart";
+import { IProduct } from "../ts/type-definitions";
 
 type ICard = {
     product: IProduct;
